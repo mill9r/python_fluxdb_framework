@@ -20,7 +20,7 @@ class InfluxDBClient:
             self._port
         )
 
-    # method "request" creates an url and add data to HTTP request body
+    # method "request" creates an url and adds data to HTTP request body
 
     def request(self, url, method='GET', params=None, expected_response_code=200, headers=None):
         url = "{0}/{1}".format(self._baseurl, url)
