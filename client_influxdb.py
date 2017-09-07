@@ -49,7 +49,7 @@ class InfluxDBClient:
     # function "query" creates a specific POST request to influxDb
     # 'q' is a key for query
     # 'db' is a key for db name
-    # 'epoch' set the response time in a json in UNIX epoch format: h,m,s,ms,u,ns
+    # 'epoch' set the time in a json response in UNIX epoch format: h,m,s,ms,u,ns
     #  and get a json response.
 
 
@@ -78,7 +78,7 @@ class InfluxDBClient:
         return result
 
     # "parse_json_response" function parses a json response from InfluxDb and extracts values,
-    # which was calculated by InfluxDb for current sql function (e.g. min(), max(), mean()(==AVG) and etc.)
+    # which were calculated by InfluxDb for current sql function (e.g. min(), max(), mean()(==AVG) and etc.)
     # {"results":[{"statement_id":0,"series":[{"name":"disk_read","columns":["time","max"],"values":[[1504703734945,696424.02776]]}]}]}
     # in this case function extracts "max" value = 696424.02776
 
