@@ -1,5 +1,5 @@
-import requests
 import json
+import requests
 
 
 class InfluxDBClient:
@@ -20,6 +20,8 @@ class InfluxDBClient:
             self._port
         )
 
+    # method "request" creates an url and add data to HTTP request body
+
     def request(self, url, method='GET', params=None, expected_response_code=200, headers=None):
         url = "{0}/{1}".format(self._baseurl, url)
 
@@ -36,12 +38,20 @@ class InfluxDBClient:
             headers=self._headers,
 
         )
-        # TODO add exception
+
         if response.status_code == expected_response_code:
             return response
 
         else:
             raise requests.exceptions.ConnectionError
+
+
+    # function "query" creates a specific POST request to influxDb
+    # 'q' is a key for query
+    # 'db' is a key for db name
+    # 'epoch' set the response time in a json in UNIX epoch format: h,m,s,ms,u,ns
+    #  and get a json response.
+
 
     def query(self, query, database=None, params=None, epoch=None,
               expected_response_code=200):
@@ -63,10 +73,14 @@ class InfluxDBClient:
                 params=params,
                 expected_response_code=expected_response_code
             )
-            # TODO check null
             print response.text
             result.append(self.parse_json_response(response.text))
         return result
+
+    # "parse_json_response" function parses a json response from InfluxDb and extracts values,
+    # which was calculated by InfluxDb for current sql function (e.g. min(), max(), mean()(==AVG) and etc.)
+    # {"results":[{"statement_id":0,"series":[{"name":"disk_read","columns":["time","max"],"values":[[1504703734945,696424.02776]]}]}]}
+    # in this case function extracts "max" value = 696424.02776
 
     def parse_json_response(self, response):
         # TODO {"results":[{"statement_id":0}]}
@@ -74,15 +88,15 @@ class InfluxDBClient:
         json_response = json.loads(response)
         values = []
 
-        if 'error' in json_response['results']:
+        if 'error' in json_response['results'][0]:
             raise Exception
-        # TODO except if
 
-        if 'series' in json_response['results']:
+
+        if 'series' in json_response['results'][0]:
             values.append(json_response['results'][0]['series'][0]['values'][0][1])
             return values
 
-        if 'series' in json_response['results']:
+        if 'series' in json_response['results'][0]:
             variable_time_value = json_response['results'][0]['series'][0]['values']
 
             for key, value in variable_time_value:
